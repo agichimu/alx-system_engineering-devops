@@ -1,3 +1,2 @@
 #!/bin/bash
-ls -a | sed -E 's/(\/?$)/\//' | tr '\n' ',' | sed -E 's/,$/\n/'
-
+ls -amvp
