@@ -1,4 +1,4 @@
-# Puppet script to configure custom header on Nginx
+#Puppet script to configure custom header on Nginx
 
 package { 'nginx':
   ensure => installed,
