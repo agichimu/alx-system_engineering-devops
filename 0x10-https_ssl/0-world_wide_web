@@ -4,7 +4,7 @@
 domain="agichimu.tech"
 
 declare -A subdomains=(
-    [www]="lb-01"
+    [www]="www"
     [lb-01]="lb-01"
     [web-01]="web-01"
     [web-02]="web-02"
@@ -12,11 +12,11 @@ declare -A subdomains=(
 
 if [[ -z "$2" ]]; then
     for sub in "${!subdomains[@]}"; do
-        record=$(dig +short "$sub.$domain")
+        record=$(dig +short "$sub.$domain" | grep -m1 "^[0-9]")
         echo "The subdomain $sub is a A record and points to $record"
     done
 else
     sub="$2"
-    record=$(dig +short "$sub.$domain")
+    record=$(dig +short "$sub.$domain" | grep -m1 "^[0-9]")
     echo "The subdomain $sub is a A record and points to $record"
 fi
