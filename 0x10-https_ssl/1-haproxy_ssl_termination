@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# HAproxy SSL termination configuration
+
+# Install certbot and obtain SSL certificate
+certbot certonly --standalone -d www.agichimu.tech
+
+# HAproxy configuration
+cat > /etc/haproxy/haproxy.cfg <<EOF
+frontend ft_ssl
+    bind :443 ssl crt /etc/letsencrypt/live/www.agichimu.tech/fullchain.pem
+    reqadd X-Forwarded-Proto:\ https
+    default_backend bk_web
+
+backend bk_web
+    server web-01 54.162.37.159:80 check
+    server web-02 18.234.169.238:80 check
+EOF
+
+# Restart HAproxy
+service haproxy restart

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# HAproxy HTTP to HTTPS redirection configuration
+
+# HAproxy configuration
+cat > /etc/haproxy/haproxy.cfg <<EOF
+frontend ft_http
+    bind :80
+    redirect scheme https code 301 if !{ ssl_fc }
+
+frontend ft_ssl
+    bind :443 ssl crt /etc/letsencrypt/live/www.agichimu.tech/fullchain.pem
+    reqadd X-Forwarded-Proto:\ https
+    default_backend bk_web
+
+backend bk_web
+    server web-01 54.162.37.159:80 check
+    server web-02 18.234.169.238:80 check
+EOF
+
+# Restart HAproxy
+service haproxy restart

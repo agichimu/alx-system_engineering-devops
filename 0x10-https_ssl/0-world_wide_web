@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Configure domain zone and display subdomain information
+
+domain="agichimu.tech"
+
+declare -A subdomains=(
+    [www]="lb-01"
+    [lb-01]="lb-01"
+    [web-01]="web-01"
+    [web-02]="web-02"
+)
+
+if [[ -z "$2" ]]; then
+    for sub in "${!subdomains[@]}"; do
+        record=$(dig +short "$sub.$domain")
+        echo "The subdomain $sub is a A record and points to $record"
+    done
+else
+    sub="$2"
+    record=$(dig +short "$sub.$domain")
+    echo "The subdomain $sub is a A record and points to $record"
+fi
