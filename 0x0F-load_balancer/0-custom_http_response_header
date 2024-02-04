@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Install nginx and add a custom header
+apt-get update
+apt-get -y install nginx
+ufw allow 'Nginx HTTP'
+
+# Create index file with custom header
+echo "Holberton School" > /var/www/html/index.nginx-debian.html
+
+# Create a custom 404 page
+echo "Ceci n'est pas une page" > /usr/share/nginx/html/custom_404.html
+
+# Configure Nginx to add custom headers and handle custom 404 page
+echo "doubling the number of webservers"
+sed -i "/listen 80 default_server/a \\\tadd_header X-Served-By \$(hostname);" /etc/nginx/sites-available/default
+service nginx restart
+
+# Additional configuration for web-02
+if [[ $(hostname) == "web-02" ]]; then
+    echo "Configuring additional settings for web-02"
+    # Add any specific configuration for web-02 here
+fi
