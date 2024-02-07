@@ -1,20 +1,40 @@
-#!/usr/bin/env bash
-# HAproxy SSL termination configuration
+global
+    log     /dev/log local0
+    maxconn 2048
+    user    haproxy
+    group   haproxy
+    tune.ssl.default-dh-param 2048
 
-# Install certbot and obtain SSL certificate
-certbot certonly --standalone -d www.agichimu.tech
+defaults
+    log     global
+    mode    http
+    option  httplog
+    option  dontlognull
+    retries 3
+    option  redispatch
+    timeout connect  5000
+    timeout client  10000
+    timeout server  10000
+    option  forwardfor
+    option  http-server-close
 
-# HAproxy configuration
-cat > /etc/haproxy/haproxy.cfg <<EOF
-frontend ft_ssl
-    bind :443 ssl crt /etc/letsencrypt/live/www.agichimu.tech/fullchain.pem
+frontend www-http
+    bind   0.0.0.0:80
+    reqadd X-Forwarded-Proto:\ http
+    default_backend www-backend
+
+frontend www-https
+    bind   0.0.0.0:443 ssl crt /etc/haproxy/certs/www.agichimu.tech.site.pem
     reqadd X-Forwarded-Proto:\ https
-    default_backend bk_web
+    acl    letsencrypt-acl path_beg /.well-known/acme-challenge/
+    use_backend letsencrypt-backend if letsencrypt-acl
+    default_backend www-backend
 
-backend bk_web
+backend www-backend
+    balance  roundrobin
+    redirect scheme https if !{ ssl_fc }
     server web-01 54.162.37.159:80 check
     server web-02 18.234.169.238:80 check
-EOF
 
-# Restart HAproxy
-service haproxy restart
+backend letsencrypt-backend
+    server letsencrypt 127.0.0.1:54321
