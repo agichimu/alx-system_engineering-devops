@@ -1,4 +1,4 @@
-global
+\global
     log     /dev/log local0
     maxconn 2048
     user    haproxy
@@ -19,20 +19,22 @@ defaults
     option  http-server-close
 
 frontend www-http
-    bind   0.0.0.0:80
+    bind   *:80
     reqadd X-Forwarded-Proto:\ http
+    acl is_holberton hdr(host) -i www.holberton.online
+    redirect scheme https code 301 if !{ ssl_fc } is_holberton
     default_backend www-backend
 
 frontend www-https
-    bind   0.0.0.0:443 ssl crt /etc/haproxy/certs/www.agichimu.tech.site.pem
+    bind   *:443 ssl crt /etc/haproxy/certs/www.agichimu.tech.site.pem
     reqadd X-Forwarded-Proto:\ https
-    acl    letsencrypt-acl path_beg /.well-known/acme-challenge/
+    acl is_holberton hdr(host) -i www.holberton.online
+    acl letsencrypt-acl path_beg /.well-known/acme-challenge/
     use_backend letsencrypt-backend if letsencrypt-acl
-    default_backend www-backend
+    use_backend www-backend if is_holberton
 
 backend www-backend
     balance  roundrobin
-    redirect scheme https if !{ ssl_fc }
     server web-01 54.162.37.159:80 check
     server web-02 18.234.169.238:80 check
 
