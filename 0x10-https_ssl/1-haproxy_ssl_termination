@@ -1,42 +1,33 @@
-\global
-    log     /dev/log local0
+global
+    log /dev/log local0
     maxconn 2048
-    user    haproxy
-    group   haproxy
+    user haproxy
+    group haproxy
     tune.ssl.default-dh-param 2048
 
 defaults
-    log     global
-    mode    http
-    option  httplog
-    option  dontlognull
+    log global
+    mode http
+    option httplog
+    option dontlognull
     retries 3
-    option  redispatch
-    timeout connect  5000
-    timeout client  10000
-    timeout server  10000
-    option  forwardfor
-    option  http-server-close
+    option redispatch
+    timeout connect 5000
+    timeout client 10000
+    timeout server 10000
+    option forwardfor
+    option http-server-close
 
 frontend www-http
-    bind   *:80
-    reqadd X-Forwarded-Proto:\ http
-    acl is_holberton hdr(host) -i www.holberton.online
-    redirect scheme https code 301 if !{ ssl_fc } is_holberton
-    default_backend www-backend
+    bind *:80
+    redirect scheme https code 301 if !{ ssl_fc }
 
 frontend www-https
-    bind   *:443 ssl crt /etc/haproxy/certs/www.agichimu.tech.site.pem
+    bind *:443 ssl crt /etc/haproxy/certs/your_certificate.pem
     reqadd X-Forwarded-Proto:\ https
-    acl is_holberton hdr(host) -i www.holberton.online
-    acl letsencrypt-acl path_beg /.well-known/acme-challenge/
-    use_backend letsencrypt-backend if letsencrypt-acl
-    use_backend www-backend if is_holberton
+    acl is_holberton hdr_end(host) -i www.holberton.online
+    use_backend holberton if is_holberton
 
-backend www-backend
-    balance  roundrobin
+backend holberton
     server web-01 54.162.37.159:80 check
     server web-02 18.234.169.238:80 check
-
-backend letsencrypt-backend
-    server letsencrypt 127.0.0.1:54321
