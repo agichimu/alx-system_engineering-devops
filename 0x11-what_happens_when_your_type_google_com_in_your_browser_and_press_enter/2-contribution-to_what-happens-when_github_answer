@@ -1,0 +1,7 @@
+# Contribution to "What Happens When" GitHub Answer
+
+I've made a contribution to the "What Happens When" GitHub repository by adding a detailed explanation of what occurs when you type "https://www.google.com" into your browser and press Enter. This addition aims to enhance the comprehensiveness of the existing answer by covering the DNS resolution, TCP/IP connection establishment, encryption via HTTPS, traversal through firewalls, load balancing, interaction with web servers, application servers, and databases.
+
+You can review the pull request [here](https://github.com/alex/what-happens-when/pull/2326).
+
+Thank you for the opportunity to contribute!
