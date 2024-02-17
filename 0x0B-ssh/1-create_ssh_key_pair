@@ -1,11 +1,4 @@
 #!/bin/bash
 
 # Create RSA key pair
-ssh-keygen -t rsa -b 4096 -f school -N "betty"
-
-# Output success message
-echo "Generating public/private rsa key pair."
-echo "Your identification has been saved in school."
-echo "Your public key has been saved in school.pub."
-echo "The key fingerprint is:"
-ssh-keygen -lf school.pub
+ssh-keygen -t rsa -b 4096 -f school -N
