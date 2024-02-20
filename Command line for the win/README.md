@@ -1,0 +1,4 @@
+cmdchallengeoops12daysgitlabemail
+	
+Command Challenge
+hello_worldcurrent_working_directorylist_filesprint_file_contentslast_linescreate_filecreate_directorycopy_filemove_filecreate_symlink
